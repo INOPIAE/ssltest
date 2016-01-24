@@ -1,5 +1,7 @@
 package de.dogcraft.ssltest.dns.encoding;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,12 @@ public class Section {
 
     public List<RR> getRecords() {
         return records;
+    }
+
+    public void encodeTo(OutputStream os) throws IOException {
+        for (RR rr : getRecords()) {
+            rr.toStream(os, hasRData);
+        }
     }
 
 }
