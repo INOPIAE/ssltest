@@ -1,5 +1,6 @@
 package de.dogcraft.ssltest.dns.rr;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +41,28 @@ public class RR {
 
     public void fromStream(InputStream is) throws IOException {}
 
-    public void toStream(OutputStream os) throws IOException {}
+    public void toStream(OutputStream os) throws IOException {
+        toStream(os, true);
+    }
+
+    public void toStream(OutputStream os, boolean hasRData) throws IOException {
+        encodeLabel(os);
+
+        DataOutputStream dos = new DataOutputStream(os);
+        dos.writeShort(type);
+        dos.writeShort(rrclass.id);
+        dos.writeInt(ttl);
+
+        if (hasRData) {
+            byte[] d = encodeRData();
+            dos.writeShort(d.length);
+            dos.write(d);
+        }
+    }
+
+    private void encodeLabel(OutputStream os) {
+
+    }
 
     public boolean fromTextual(String textual) {
         return fromTextual(textual, "");
