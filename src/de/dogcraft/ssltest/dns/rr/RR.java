@@ -20,7 +20,7 @@ public class RR {
 
     private String label;
 
-    private long ttl;
+    private int ttl;
 
     private RRClass rrclass;
 
@@ -120,11 +120,11 @@ public class RR {
         this.label = label;
     }
 
-    public long getTTL() {
+    public int getTTL() {
         return ttl;
     }
 
-    public void setTTL(long ttl) {
+    public void setTTL(int ttl) {
         this.ttl = ttl;
     }
 
