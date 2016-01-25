@@ -51,9 +51,10 @@ public class RR {
         DataOutputStream dos = new DataOutputStream(os);
         dos.writeShort(type);
         dos.writeShort(rrclass.id);
-        dos.writeInt(ttl);
 
         if (hasRData) {
+            dos.writeInt(ttl);
+
             byte[] d = encodeRData();
             dos.writeShort(d.length);
             dos.write(d);
