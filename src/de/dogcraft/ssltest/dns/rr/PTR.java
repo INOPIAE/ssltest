@@ -8,7 +8,7 @@ public class PTR extends RR {
     private DNSName ptrdname;
 
     static {
-        parserFormat.add(new NamedEntityContainer<DNSName>("PTRDNAME"));
+        parserFormat.add(new NamedEntityContainer<DNSName>(DNSName.class, "PTRDNAME"));
     }
 
     @Override

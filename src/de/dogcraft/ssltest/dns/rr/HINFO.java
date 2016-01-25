@@ -10,8 +10,8 @@ public class HINFO extends RR {
     private String os;
 
     static {
-        parserFormat.add(new NamedEntityContainer<Text>("CPU"));
-        parserFormat.add(new NamedEntityContainer<Text>("OS"));
+        parserFormat.add(new NamedEntityContainer<Text>(Text.class, "CPU"));
+        parserFormat.add(new NamedEntityContainer<Text>(Text.class, "OS"));
     }
 
     @Override

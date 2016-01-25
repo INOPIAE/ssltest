@@ -14,7 +14,7 @@ public class TXT extends RR {
                 new NamedEntityContainer<Container>(
                         "TEXT",
                         new Container(
-                                new EntityContainer<Text>()
+                                new EntityContainer<Text>(Text.class)
                         )
                 )
                 );    // TEXT

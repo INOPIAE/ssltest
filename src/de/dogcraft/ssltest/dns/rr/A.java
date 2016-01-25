@@ -11,7 +11,7 @@ public class A extends RR {
     private InetAddress ip4address;
 
     static {
-        parserFormat.add(new NamedEntityContainer<IPv4>("ADDRESS"));
+        parserFormat.add(new NamedEntityContainer<IPv4>(IPv4.class, "ADDRESS"));
     }
 
     @Override

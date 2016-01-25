@@ -21,14 +21,14 @@ public class LOC extends RR {
     private Int32 altitude;
 
     static {
-        parserFormat.add(new NamedEntityContainer<Int16>("VERSION"));
-        parserFormat.add(new NamedEntityContainer<Int16>("SIZE"));
-        parserFormat.add(new NamedEntityContainer<Int16>("HORIZ_PRE"));
-        parserFormat.add(new NamedEntityContainer<Int16>("VORT_PRE"));
+        parserFormat.add(new NamedEntityContainer<Int16>(Int16.class, "VERSION"));
+        parserFormat.add(new NamedEntityContainer<Int16>(Int16.class, "SIZE"));
+        parserFormat.add(new NamedEntityContainer<Int16>(Int16.class, "HORIZ_PRE"));
+        parserFormat.add(new NamedEntityContainer<Int16>(Int16.class, "VORT_PRE"));
 
-        parserFormat.add(new NamedEntityContainer<Int32>("LATITUDE"));
-        parserFormat.add(new NamedEntityContainer<Int32>("LONGITUDE"));
-        parserFormat.add(new NamedEntityContainer<Int32>("ALTITUDE"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "LATITUDE"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "LONGITUDE"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "ALTITUDE"));
     }
 
     @Override

@@ -8,7 +8,7 @@ public class CNAME extends RR {
     private DNSName cname;
 
     static {
-        parserFormat.add(new NamedEntityContainer<DNSName>("CNAME"));
+        parserFormat.add(new NamedEntityContainer<DNSName>(DNSName.class, "CNAME"));
     }
 
     @Override

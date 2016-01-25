@@ -2,8 +2,8 @@ package de.dogcraft.ssltest.dns.encoding;
 
 public class NamedEntityContainer<E extends Entity> extends EntityContainer<E> {
 
-    public NamedEntityContainer() {
-        super();
+    public NamedEntityContainer(Class<E> ce) {
+        super(ce);
         this.name = "";
     }
 
@@ -12,8 +12,8 @@ public class NamedEntityContainer<E extends Entity> extends EntityContainer<E> {
         this.name = "";
     }
 
-    public NamedEntityContainer(String name) {
-        super();
+    public NamedEntityContainer(Class<E> ce, String name) {
+        super(ce);
         this.name = name;
     }
 

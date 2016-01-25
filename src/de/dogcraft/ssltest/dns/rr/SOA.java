@@ -21,14 +21,14 @@ public class SOA extends RR {
     private long minimum;
 
     static {
-        parserFormat.add(new NamedEntityContainer<DNSName>("MNAME"));
-        parserFormat.add(new NamedEntityContainer<DNSName>("RNAME"));
+        parserFormat.add(new NamedEntityContainer<DNSName>(DNSName.class, "MNAME"));
+        parserFormat.add(new NamedEntityContainer<DNSName>(DNSName.class, "RNAME"));
 
-        parserFormat.add(new NamedEntityContainer<Int32>("SERIAL"));
-        parserFormat.add(new NamedEntityContainer<Int32>("REFRESH"));
-        parserFormat.add(new NamedEntityContainer<Int32>("RETRY"));
-        parserFormat.add(new NamedEntityContainer<Int32>("EXPIRE"));
-        parserFormat.add(new NamedEntityContainer<Int32>("MINIMUM"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "SERIAL"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "REFRESH"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "RETRY"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "EXPIRE"));
+        parserFormat.add(new NamedEntityContainer<Int32>(Int32.class, "MINIMUM"));
     }
 
     @Override

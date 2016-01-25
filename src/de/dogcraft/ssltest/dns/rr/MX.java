@@ -11,8 +11,8 @@ public class MX extends RR {
     private DNSName exchange;
 
     static {
-        parserFormat.add(new NamedEntityContainer<Int16>("PREFERENCE"));
-        parserFormat.add(new NamedEntityContainer<DNSName>("EXCHANGE"));
+        parserFormat.add(new NamedEntityContainer<Int16>(Int16.class, "PREFERENCE"));
+        parserFormat.add(new NamedEntityContainer<DNSName>(DNSName.class, "EXCHANGE"));
     }
 
     @Override

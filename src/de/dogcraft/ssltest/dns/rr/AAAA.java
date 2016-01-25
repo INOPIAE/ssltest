@@ -12,7 +12,7 @@ public class AAAA extends RR {
     private InetAddress ip6address;
 
     static {
-        parserFormat.add(new NamedEntityContainer<IPv6>("ADDRESS"));
+        parserFormat.add(new NamedEntityContainer<IPv6>(IPv6.class, "ADDRESS"));
     }
 
     @Override

@@ -8,7 +8,7 @@ public class NS extends RR {
     private DNSName nsdname;
 
     static {
-        parserFormat.add(new NamedEntityContainer<DNSName>("NSDNAME"));
+        parserFormat.add(new NamedEntityContainer<DNSName>(DNSName.class, "NSDNAME"));
     }
 
     @Override
