@@ -140,7 +140,7 @@ public class RR {
         return label.endsWith("." + origin) ? label.substring(0, label.length() - origin.length() - 1) : label;
     }
 
-    protected void setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
