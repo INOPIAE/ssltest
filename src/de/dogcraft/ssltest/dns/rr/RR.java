@@ -36,9 +36,13 @@ public class RR {
         label = "";
         ttl = 0;
         rrclass = RRClass.ANY;
-        type = RRType.UNKNOWN.id;
+        type = getInternalType().id;
         rdata = new byte[0];
     };
+
+    protected RRType getInternalType() {
+        return RRType.getByClass(this.getClass());
+    }
 
     public void fromStream(InputStream is) throws IOException {}
 

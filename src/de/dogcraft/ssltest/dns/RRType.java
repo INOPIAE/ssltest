@@ -127,4 +127,14 @@ public enum RRType {
         this.rrclass = rrclass;
     }
 
+    public static RRType getByClass(Class<? extends RR> rr) {
+        for (RRType t : values()) {
+            if (rr.equals(t.rrclass)) {
+                return t;
+            }
+        }
+
+        return RRType.UNKNOWN;
+    }
+
 }
