@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import org.bouncycastle.util.encoders.Hex;
 
+import de.dogcraft.ssltest.dns.RDataCoder;
 import de.dogcraft.ssltest.dns.RRClass;
 import de.dogcraft.ssltest.dns.RRType;
 import de.dogcraft.ssltest.dns.encoding.Entity;
@@ -46,7 +47,7 @@ public class RR {
     }
 
     public void toStream(OutputStream os, boolean hasRData) throws IOException {
-        encodeLabel(os);
+        RDataCoder.writeDNSName(os, this.getLabel());
 
         DataOutputStream dos = new DataOutputStream(os);
         dos.writeShort(type);
@@ -59,10 +60,6 @@ public class RR {
             dos.writeShort(d.length);
             dos.write(d);
         }
-    }
-
-    private void encodeLabel(OutputStream os) {
-
     }
 
     public boolean fromTextual(String textual) {

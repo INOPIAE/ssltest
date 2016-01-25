@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.StringJoiner;
 
-class RDataCoder {
+public class RDataCoder {
 
     public static String readDNSName(InputStream is) throws IOException {
         StringJoiner sj = new StringJoiner(".");
