@@ -80,7 +80,7 @@ public class Truststore {
                         ks.setCertificateEntry(TruststoreUtil.outputFingerprint(crt, md), crt);
                     } catch (Exception e) {
                         System.out.println("Could not load certificate: " + f1.getAbsolutePath());
-                        e.printStackTrace();
+                        System.out.println("Got exception of class " + e.getClass().getName() + ": " + e.getMessage());
                     }
                 }
             }

@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
@@ -62,6 +64,9 @@ public class TruststoreOverview extends HttpServlet {
             try {
                 pubkey = TruststoreUtil.outputFingerprint(c.getPublicKey().getEncoded(), MessageDigest.getInstance("SHA-512"));
                 hash = c.getSigAlgName();
+                if("1.3.36.3.3.1.2".equals(hash)) {
+                    hash = "RIPEMD160withRSA";
+                }
                 X500Name n = new X500Name(c.getSubjectX500Principal().getEncoded());
                 o = n.getOrganization();
                 ou = n.getOrganizationalUnit();
@@ -361,8 +366,15 @@ public class TruststoreOverview extends HttpServlet {
             TreeMap<CertificateIdentifier, Certificate> certs = new TreeMap<>();
             while (al.hasMoreElements()) {
                 String alias = al.nextElement();
-                X509Certificate c = (X509Certificate) ks.getCertificate(alias);
-                CertificateIdentifier gname = new CertificateIdentifier(c, 1);
+                X509Certificate c;
+                CertificateIdentifier gname;
+                try {
+                    c = (X509Certificate) ks.getCertificate(alias);
+                    gname = new CertificateIdentifier(c, 1);
+                } catch(Exception e) {
+                    System.err.println("Error in " + alias + " of class " + e.getClass().getName() + ": " + e.getMessage());
+                    continue;
+                }
                 int i = 2;
                 while (certs.containsKey(gname)) {
                     gname.count = i++;
@@ -379,8 +391,11 @@ public class TruststoreOverview extends HttpServlet {
                 try {
                     cert.verify(cert.getPublicKey());
                     pw.print("S");
+                } catch (InvalidKeyException ex) {
+                    pw.print("U");
+                } catch (NoSuchAlgorithmException ex) {
+                    pw.print("A");
                 } catch (SignatureException ex) {
-
                 }
                 pw.print("</td>");
                 for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
