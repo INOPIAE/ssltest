@@ -1,6 +1,8 @@
 package de.dogcraft.ssltest.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -64,7 +66,7 @@ public class TruststoreOverview extends HttpServlet {
             try {
                 pubkey = TruststoreUtil.outputFingerprint(c.getPublicKey().getEncoded(), MessageDigest.getInstance("SHA-512"));
                 hash = c.getSigAlgName();
-                if("1.3.36.3.3.1.2".equals(hash)) {
+                if ("1.3.36.3.3.1.2".equals(hash)) {
                     hash = "RIPEMD160withRSA";
                 }
                 X500Name n = new X500Name(c.getSubjectX500Principal().getEncoded());
@@ -309,53 +311,13 @@ public class TruststoreOverview extends HttpServlet {
         resp.addHeader("Content-Security-Policy", "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self';");
 
         PrintWriter pw = resp.getWriter();
-        pw.println("<!DOCTYPE html>");
-        pw.println("<html>");
-        pw.println("<head>");
-        pw.println("<style type='text/css'>");
-        pw.println("/* Signature Algorithm coloring */");
-        pw.println(".MD2withRSA { background-color: #FFCCCC;}");
-        pw.println(".MD4withRSA { background-color: #FFDDCC;}");
-        pw.println(".MD5withRSA { background-color: #FFEECC;}");
-        pw.println(".SHA1withRSA { background-color: #FFFFCC;}");
-        pw.println(".SHA256withRSA { background-color: #EEFFCC;}");
-        pw.println(".SHA384withRSA { background-color: #DDFFCC;}");
-        pw.println(".SHA512withRSA { background-color: #CCFFCC;}");
 
-        pw.println(".MD2withDSA { background-color: #FFCCCC;}");
-        pw.println(".MD4withDSA { background-color: #FFDDCC;}");
-        pw.println(".MD5withDSA { background-color: #FFEECC;}");
-        pw.println(".SHA1withDSA { background-color: #FFFFCC;}");
-        pw.println(".SHA256withDSA { background-color: #EEFFCC;}");
-        pw.println(".SHA384withDSA { background-color: #DDFFCC;}");
-        pw.println(".SHA512withDSA { background-color: #CCFFCC;}");
+        BufferedReader br = new BufferedReader(new InputStreamReader(Service.replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "trust"), "UTF-8"));
+        String line;
+        while ((line = br.readLine()) != null) {
+            pw.println(line);
+        }
 
-        pw.println(".SHA1withECDSA { background-color: #FFFFCC;}");
-        pw.println(".SHA256withECDSA { background-color: #CCEEFF;}");
-        pw.println(".SHA384withECDSA { background-color: #CCDDFF;}");
-        pw.println(".SHA384withECDSA { background-color: #CCCCFF;}");
-
-        pw.println("/* System Store coloring */");
-        pw.println(".archlinux{ background-color: #0088CC; }");
-        pw.println(".debian{ background-color: #BB8888; }");
-        pw.println(".firefox{ background-color: #FFAA33; }");
-        pw.println(".openbsd{ background-color: #f2eb5d; }");
-        pw.println(".osx{ background-color: #DDDDFF; }");
-        pw.println(".android{ background-color: #adf260; }");
-        pw.println(".win{ background-color: #42affe; }");
-        pw.println("th.rotate { height: 240px;" + "white-space: nowrap;" + "}" + "th.rotate > div {" + "transform: translate(0, 116px) rotate(270deg);" + "width: 15px;" + "}" + "th.rotate > div > span {" + "font-size: 12px; " + "padding: 5px 10px;" + "}");
-        pw.println("</style>");
-
-        pw.println("<link rel=\"stylesheet\" href=\"/static/css/bootstrap.min.css\" integrity=\"sha256-n76FyMGjGMOOEOPidGzBm47cP+GZosjjm2lMTETk9uQ= sha384-Z5GZZWTlEX3+1L8Zf10iDHaEsJdP22UbMPaP+5tL8f5FFPHKfzXXJ+eHGWjXp2/9 sha512-MF0WqdPSGzzgCQMnkIiQfVZQ5PB8ePw5HBspykUSjRcCzkrORndAiCvCxNpvKG6ujfJTR0PpVGEHz2WBzK8ARA==\" />");
-        pw.println("<link rel=\"stylesheet\" href=\"/static/css/client.css\" integrity=\"sha256-T4DhpY1Tg+D/WOTZIt83/y1zPWWXVG7bgBiNuRJ8jwc= sha384-ZyIcdg1UcDEwJOOqGstXAuuG3hVPPr78Exy9auLO2As+CShGdFyC6BmIRq2zpr2t sha512-voedxV6W+C4Q8cEbdfrAMiLwHXJJIe21eolEqkvDP+7QdQVEoQvR68KNdulnn6mh2Ogp5/PaaHlYeLPBVpQ1BA==\"/>");
-        pw.println("<link rel=\"stylesheet\" href=\"/cipherRater.css\" />");
-
-        pw.println("<script type=\"text/javascript\" charset=\"utf-8\" src=\"/static/js/client.js\" integrity=\"sha256-eZemFf66OJ9Uj+QpU3JLjFhhZGP4cqVAbzIzsSHXsxo= sha384-tpdvKHzLql48wh1yt887YouNZ3uyB0DiuS4CitV4XzO87/j+7jNE7LhXfFKpw+X4 sha512-/tgQDpws2Egl/fXj7itZxNI4v8UmB8ii/4wZ57EiyLnHQfam+Z9/sc/nT6vsZbqhjFbpyd5HTTLLqd7BV9+G3g==\" />");
-        pw.println("<script type=\"text/javascript\" charset=\"utf-8\" src=\"/oid.js\" />");
-
-        pw.println("</head>");
-
-        pw.println("<body>");
         pw.println("<div id=\"outline\"></div>");
 
         pw.println("<div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">");
@@ -395,7 +357,7 @@ public class TruststoreOverview extends HttpServlet {
                 try {
                     c = (X509Certificate) ks.getCertificate(alias);
                     gname = new CertificateIdentifier(c, 1);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     System.err.println("Error in " + alias + " of class " + e.getClass().getName() + ": " + e.getMessage());
                     continue;
                 }
@@ -453,8 +415,11 @@ public class TruststoreOverview extends HttpServlet {
                 pw.println("</tr>");
             }
             pw.println("</table>");
-            pw.println("</body>");
-            pw.println("</html>");
+
+            br = new BufferedReader(new InputStreamReader(Service.class.getResourceAsStream("../res/footer.htm"), "UTF-8"));
+            while ((line = br.readLine()) != null) {
+                pw.println(line);
+            }
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }

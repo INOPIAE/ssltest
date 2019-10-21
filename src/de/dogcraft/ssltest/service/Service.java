@@ -1,5 +1,6 @@
 package de.dogcraft.ssltest.service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,9 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 
 import de.dogcraft.ssltest.KnownDHGroup;
+import de.dogcraft.ssltest.Standalone;
 import de.dogcraft.ssltest.utils.CertificateWrapper;
 import de.dogcraft.ssltest.utils.IOUtils;
 import de.dogcraft.ssltest.utils.PEM;
+import de.dogcraft.ssltest.utils.ReplacingInputStream;
 import de.dogcraft.ssltest.utils.TruststoreGroup;
 
 public class Service extends HttpServlet {
@@ -61,6 +64,33 @@ public class Service extends HttpServlet {
         }
     }
 
+    private static void copyStream(InputStream inHeader, InputStream in, InputStream inFooter, OutputStream out) {
+        try {
+            try {
+                try {
+                    int len;
+                    byte[] buf = new byte[65536];
+
+                    while ((len = inHeader.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    while ((len = inFooter.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                } finally {
+                    out.close();
+                }
+            } finally {
+                in.close();
+                inHeader.close();
+            }
+        } catch (IOException e) {
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
@@ -70,15 +100,15 @@ public class Service extends HttpServlet {
         if (path == null || path.equals("/")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(Service.class.getResourceAsStream("../res/index.htm"), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "server"), Service.class.getResourceAsStream("../res/index.htm"), Service.class.getResourceAsStream("../res/footer.htm"), resp.getOutputStream());
         } else if (path.equals("/about")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(Service.class.getResourceAsStream("../res/about.htm"), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "about"), Service.class.getResourceAsStream("../res/about.htm"), Service.class.getResourceAsStream("../res/footer.htm"), resp.getOutputStream());
         } else if (path.equals("/cert")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(Service.class.getResourceAsStream("../res/cert.htm"), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "cert"), Service.class.getResourceAsStream("../res/cert.htm"), Service.class.getResourceAsStream("../res/footer.htm"), resp.getOutputStream());
         } else if (path.equals("/server.event")) {
             resp.addHeader("Cache-Control", "max-age=0");
             if (req.getParameter("domain") != null) {
@@ -173,4 +203,11 @@ public class Service extends HttpServlet {
         cts.performTest(req, resp, useEventStream);
     }
 
+    public static InputStream replaceHTML(InputStream in, String page) throws FileNotFoundException, IOException {
+        in = new ReplacingInputStream(in, "$application", Standalone.app.getApplicationName());
+        in = new ReplacingInputStream(in, "$classserver", page.contains("server") ? "active" : "");
+        in = new ReplacingInputStream(in, "$classcert", page.contains("cert") ? "active" : "");
+        in = new ReplacingInputStream(in, "$classtrust", page.contains("trust") ? "active" : "");
+        return new ReplacingInputStream(in, "$classabout", page.contains("about") ? "active" : "");
+    }
 }

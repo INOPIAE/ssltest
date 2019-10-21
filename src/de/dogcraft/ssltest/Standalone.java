@@ -17,12 +17,15 @@ import de.dogcraft.ssltest.service.TruststoreOverview;
 
 public class Standalone {
 
+    public static ApplicationProperties app;
+
     public static void main(String[] args) throws Exception {
         Server s = new Server();
         HttpConfiguration hc = new HttpConfiguration();
         hc.addCustomizer(new ForwardedRequestCustomizer());
+        app = new ApplicationProperties();
         ServerConnector sc = new ServerConnector(s, new HttpConnectionFactory(hc));
-        sc.setPort(8080);
+        sc.setPort(app.getPort());
         s.addConnector(sc);
 
         ServletContextHandler main = new ServletContextHandler();
