@@ -28,11 +28,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import sun.security.x509.AVA;
-import sun.security.x509.X500Name;
 import de.dogcraft.ssltest.utils.Truststore;
 import de.dogcraft.ssltest.utils.TruststoreGroup;
 import de.dogcraft.ssltest.utils.TruststoreUtil;
+import sun.security.x509.AVA;
+import sun.security.x509.X500Name;
 
 public class TruststoreOverview extends HttpServlet {
 
@@ -345,20 +345,44 @@ public class TruststoreOverview extends HttpServlet {
         pw.println(".win{ background-color: #42affe; }");
         pw.println("th.rotate { height: 240px;" + "white-space: nowrap;" + "}" + "th.rotate > div {" + "transform: translate(0, 116px) rotate(270deg);" + "width: 15px;" + "}" + "th.rotate > div > span {" + "font-size: 12px; " + "padding: 5px 10px;" + "}");
         pw.println("</style>");
+
+        pw.println("<link rel=\"stylesheet\" href=\"/static/css/bootstrap.min.css\" integrity=\"sha256-n76FyMGjGMOOEOPidGzBm47cP+GZosjjm2lMTETk9uQ= sha384-Z5GZZWTlEX3+1L8Zf10iDHaEsJdP22UbMPaP+5tL8f5FFPHKfzXXJ+eHGWjXp2/9 sha512-MF0WqdPSGzzgCQMnkIiQfVZQ5PB8ePw5HBspykUSjRcCzkrORndAiCvCxNpvKG6ujfJTR0PpVGEHz2WBzK8ARA==\" />");
+        pw.println("<link rel=\"stylesheet\" href=\"/static/css/client.css\" integrity=\"sha256-T4DhpY1Tg+D/WOTZIt83/y1zPWWXVG7bgBiNuRJ8jwc= sha384-ZyIcdg1UcDEwJOOqGstXAuuG3hVPPr78Exy9auLO2As+CShGdFyC6BmIRq2zpr2t sha512-voedxV6W+C4Q8cEbdfrAMiLwHXJJIe21eolEqkvDP+7QdQVEoQvR68KNdulnn6mh2Ogp5/PaaHlYeLPBVpQ1BA==\"/>");
+        pw.println("<link rel=\"stylesheet\" href=\"/cipherRater.css\" />");
+
+        pw.println("<script type=\"text/javascript\" charset=\"utf-8\" src=\"/static/js/client.js\" integrity=\"sha256-eZemFf66OJ9Uj+QpU3JLjFhhZGP4cqVAbzIzsSHXsxo= sha384-tpdvKHzLql48wh1yt887YouNZ3uyB0DiuS4CitV4XzO87/j+7jNE7LhXfFKpw+X4 sha512-/tgQDpws2Egl/fXj7itZxNI4v8UmB8ii/4wZ57EiyLnHQfam+Z9/sc/nT6vsZbqhjFbpyd5HTTLLqd7BV9+G3g==\" />");
+        pw.println("<script type=\"text/javascript\" charset=\"utf-8\" src=\"/oid.js\" />");
+
         pw.println("</head>");
+
         pw.println("<body>");
+        pw.println("<div id=\"outline\"></div>");
+
+        pw.println("<div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">");
+        pw.println("<div class=\"container\">");
+
+        pw.println("<div class=\"navbar-header\">");
+        pw.println("<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">");
+        pw.println("<span class=\"sr-only\">Toggle navigation</span>");
+        pw.println("<span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span>");
+        pw.println("</button>");
+        pw.println("<a class=\"navbar-brand\" href=\"#\">SSL-Test</a>");
+        pw.println("</div>");
+
+        pw.println("<div class=\"navbar-collapse collapse\">");
+        pw.println("<ul class=\"nav navbar-nav\">");
+        pw.println("<li><a href=\"/\">Server Test</a></li>");
+        pw.println("<li><a href=\"cert\">Certificate Test</a></li>");
+        pw.println("<li class=\"active\"><a href=\"trust\">Trusted Roots</a></li>");
+        pw.println("<li><a href=\"about\">About</a></li>");
+        pw.println("</ul>");
+        pw.println("</div>");
+
+        pw.println("</div>");
+        pw.println("</div>");
+
         pw.println("<table border='1'>");
-        pw.print("<tr><th>C</th><th>O</th><th>OU</th><th>CN</th><th>other dn</th><th>signature</th><th>keyType</th><th>keySize</th><th>keyDetail</th><th>pubkey ID</th><th>#</th><th>from</th><th>to</th><th><span title='selfsigned'>S</span>");
-        for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
-            for (Entry<String, Truststore> entry : truststore.getValue().getContainedTables().entrySet()) {
-                pw.print("<th class='rotate'><div><span title='");
-                pw.print(truststore.getKey() + "/" + entry.getKey());
-                pw.print("'>");
-                pw.print(truststore.getKey() + "/" + entry.getKey());
-                pw.print("</span></div></th>");
-            }
-        }
-        pw.println("</tr>");
+
         try {
             Truststore any = TruststoreGroup.getAnyTruststore();
             KeyStore ks = any.getKeyStore();
@@ -381,6 +405,18 @@ public class TruststoreOverview extends HttpServlet {
                 }
                 certs.put(gname, c);
             }
+            pw.print("<tr><th colspan=\"" + TruststoreGroup.getStores().size() + 14 + "\">The following table contains " + certs.size() + " entries</th></tr>");
+            pw.print("<tr><th>C</th><th>O</th><th>OU</th><th>CN</th><th>other dn</th><th>signature</th><th>keyType</th><th>keySize</th><th>keyDetail</th><th>pubkey ID</th><th>#</th><th>from</th><th>to</th><th><span title='selfsigned'>S</span>");
+            for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
+                for (Entry<String, Truststore> entry : truststore.getValue().getContainedTables().entrySet()) {
+                    pw.print("<th class='rotate'><div><span title='");
+                    pw.print(truststore.getKey() + "/" + entry.getKey());
+                    pw.print("'>");
+                    pw.print(truststore.getKey() + "/" + entry.getKey());
+                    pw.print("</span></div></th>");
+                }
+            }
+            pw.println("</tr>");
             for (Entry<CertificateIdentifier, Certificate> e : certs.entrySet()) {
                 X509Certificate cert = (X509Certificate) e.getValue();
                 pw.print("<tr>");

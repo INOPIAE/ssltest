@@ -89,6 +89,9 @@ public class Service extends HttpServlet {
             if (req.getParameter("domain") != null) {
                 reqTestServer(req, resp, false);
             }
+        } else if (path.equals("/serverclear")) {
+            ServerTestService.clearCache();
+            resp.sendRedirect("/");
         } else if (path.equals("/cert.event")) {
             resp.addHeader("Cache-Control", "max-age=0");
             if (req.getParameter("fp") != null) {
@@ -99,6 +102,9 @@ public class Service extends HttpServlet {
             if (req.getParameter("fp") != null) {
                 reqTestCertificate(req, resp, false);
             }
+        } else if (path.equals("/certclear")) {
+            CertificateTestService.clearCache();
+            resp.sendRedirect("/cert");
         } else if (path.equals("/oid.js")) {
             OIDs.outputOids(resp);
         } else if (path.equals("/certstatus")) {

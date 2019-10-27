@@ -150,4 +150,7 @@ class ServerTestService extends TestService {
         to.performTest();
     }
 
+    public static void clearCache() {
+        cacheHostIPs.clear();
+    }
 }

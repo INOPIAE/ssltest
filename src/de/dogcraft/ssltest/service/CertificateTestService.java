@@ -197,6 +197,11 @@ public class CertificateTestService extends TestService {
         public File getPath(String fp) {
             return new File("crtcache/" + fp.substring(0, 2) + "/" + fp.substring(2, 4) + "/" + fp.substring(4, 8) + "/" + fp.substring(8) + ".crt");
         }
+
+        public void clearCache() {
+            lastClean -= 60 * 60 * 1000;
+            clean();
+        }
     }
 
     private static final HashMap<String, CertificateTestingSession> cacheSession = new HashMap<>();
@@ -265,6 +270,10 @@ public class CertificateTestService extends TestService {
         synchronized (cache) {
             cache.put(wrap);
         }
+    }
+
+    public static void clearCache() {
+        cache.clearCache();
     }
 
     public static Set<CertificateWrapper> getCAs() {
