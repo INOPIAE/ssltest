@@ -305,10 +305,17 @@ public class TruststoreOverview extends HttpServlet {
     }
 
     @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        this.doGet(request, response);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html; charset=UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.addHeader("Content-Security-Policy", "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self';");
+
+        String root = req.getParameter("root") == null ? "" : req.getParameter("root").toLowerCase();
 
         PrintWriter pw = resp.getWriter();
 
@@ -317,37 +324,37 @@ public class TruststoreOverview extends HttpServlet {
         while ((line = br.readLine()) != null) {
             pw.println(line);
         }
-
-        pw.println("<div id=\"outline\"></div>");
-
-        pw.println("<div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">");
-        pw.println("<div class=\"container\">");
-
-        pw.println("<div class=\"navbar-header\">");
-        pw.println("<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">");
-        pw.println("<span class=\"sr-only\">Toggle navigation</span>");
-        pw.println("<span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span>");
-        pw.println("</button>");
-        pw.println("<a class=\"navbar-brand\" href=\"#\">SSL-Test</a>");
-        pw.println("</div>");
-
-        pw.println("<div class=\"navbar-collapse collapse\">");
-        pw.println("<ul class=\"nav navbar-nav\">");
-        pw.println("<li><a href=\"/\">Server Test</a></li>");
-        pw.println("<li><a href=\"cert\">Certificate Test</a></li>");
-        pw.println("<li class=\"active\"><a href=\"trust\">Trusted Roots</a></li>");
-        pw.println("<li><a href=\"about\">About</a></li>");
-        pw.println("</ul>");
-        pw.println("</div>");
-
-        pw.println("</div>");
-        pw.println("</div>");
-
-        pw.println("<table border='1'>");
-
         try {
             Truststore any = TruststoreGroup.getAnyTruststore();
             KeyStore ks = any.getKeyStore();
+            pw.print("<div class=\"container\" id=\"container\" role=\"main\">");
+            pw.print("<div class=\"jumbotron\">");
+            pw.print("<h1>Trust</h1>");
+            pw.print(String.format("<p>Find a root or intermediate certificate out of %s certificates in the database.</p>", ks.size()));
+
+            pw.print("<form method=\"POST\" id=\"reqform\">");
+            pw.print("<div class=\"input-group space-below\">");
+            pw.print("<span class=\"input-group-addon\">Subject (CN)</span>");
+            pw.print("<input type=\"text\" class=\"form-control\" name=\"root\" id=\"root\" placeholder=\"enter part of the subject entry or * for all\" />");
+            pw.print("</div>");
+            pw.print("<input type=\"submit\" value=\"Find\" class=\"btn btn-primary btn-lg\">");
+            pw.print("</form>");
+
+            switch (root) {
+            case "*":
+                pw.print("<p>List of all known root certificate</p>");
+                break;
+            case "":
+                pw.print("<p>Add an entry to the filter</p>");
+                break;
+            default:
+                pw.print(String.format("<p>List of all known root certificate containing '%s' in the subject</p>", root));
+                break;
+            }
+
+            pw.print("</div>");
+            pw.print("</div>");
+
             Enumeration<String> al = ks.aliases();
             TreeMap<CertificateIdentifier, Certificate> certs = new TreeMap<>();
             while (al.hasMoreElements()) {
@@ -367,55 +374,58 @@ public class TruststoreOverview extends HttpServlet {
                 }
                 certs.put(gname, c);
             }
-            pw.print("<tr><th colspan=\"" + TruststoreGroup.getStores().size() + 14 + "\">The following table contains " + certs.size() + " entries</th></tr>");
-            pw.print("<tr><th>C</th><th>O</th><th>OU</th><th>CN</th><th>other dn</th><th>signature</th><th>keyType</th><th>keySize</th><th>keyDetail</th><th>pubkey ID</th><th>#</th><th>from</th><th>to</th><th><span title='selfsigned'>S</span>");
-            for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
-                for (Entry<String, Truststore> entry : truststore.getValue().getContainedTables().entrySet()) {
-                    pw.print("<th class='rotate'><div><span title='");
-                    pw.print(truststore.getKey() + "/" + entry.getKey());
-                    pw.print("'>");
-                    pw.print(truststore.getKey() + "/" + entry.getKey());
-                    pw.print("</span></div></th>");
-                }
-            }
-            pw.println("</tr>");
-            for (Entry<CertificateIdentifier, Certificate> e : certs.entrySet()) {
-                X509Certificate cert = (X509Certificate) e.getValue();
-                pw.print("<tr>");
-                e.getKey().print(pw, TruststoreUtil.outputFingerprint(e.getValue(), MessageDigest.getInstance("SHA-512")));
-                outputDate(pw, cert.getNotBefore(), false);
-                outputDate(pw, cert.getNotAfter(), true);
-                pw.print("<td>");
-                try {
-                    cert.verify(cert.getPublicKey());
-                    pw.print("S");
-                } catch (InvalidKeyException ex) {
-                    pw.print("U");
-                } catch (NoSuchAlgorithmException ex) {
-                    pw.print("A");
-                } catch (SignatureException ex) {
-                }
-                pw.print("</td>");
+            if ( !root.isEmpty()) {
+                pw.println("<table border='1'>");
+                pw.print("<tr><th>C</th><th>O</th><th>OU</th><th>CN</th><th>other dn</th><th>signature</th><th>keyType</th><th>keySize</th><th>keyDetail</th><th>pubkey ID</th><th>#</th><th>from</th><th>to</th><th><span title='selfsigned'>S</span>");
                 for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
-                    for (Entry<String, Truststore> ttab : truststore.getValue().getContainedTables().entrySet()) {
-                        pw.print("<td class='" + truststore.getKey() + "'>");
-                        pw.print("<span title='" + truststore.getKey() + "/" + ttab.getKey() + "' style='color: ");
-                        // float val =
-                        // truststore.getValue().contains(e.getValue());
-                        if (ttab.getValue().contains(e.getValue())) {
-                            pw.print("green'>&#x2714;</span>");// check:
-                                                               //
-                        } else {
-                            pw.print("red'>&#x2718;</span>"); // cross:
-                                                              //
-                        }
-                        pw.print("</td>");
+                    for (Entry<String, Truststore> entry : truststore.getValue().getContainedTables().entrySet()) {
+                        pw.print("<th class='rotate'><div><span title='");
+                        pw.print(truststore.getKey() + "/" + entry.getKey());
+                        pw.print("'>");
+                        pw.print(truststore.getKey() + "/" + entry.getKey());
+                        pw.print("</span></div></th>");
                     }
                 }
                 pw.println("</tr>");
+                for (Entry<CertificateIdentifier, Certificate> e : certs.entrySet()) {
+                    X509Certificate cert = (X509Certificate) e.getValue();
+                    if (cert.getSubjectDN().toString().toLowerCase().contains(root) || root.equals("*")) {
+                        pw.print("<tr>");
+                        e.getKey().print(pw, TruststoreUtil.outputFingerprint(e.getValue(), MessageDigest.getInstance("SHA-512")));
+                        outputDate(pw, cert.getNotBefore(), false);
+                        outputDate(pw, cert.getNotAfter(), true);
+                        pw.print("<td>");
+                        try {
+                            cert.verify(cert.getPublicKey());
+                            pw.print("S");
+                        } catch (InvalidKeyException ex) {
+                            pw.print("U");
+                        } catch (NoSuchAlgorithmException ex) {
+                            pw.print("A");
+                        } catch (SignatureException ex) {
+                        }
+                        pw.print("</td>");
+                        for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
+                            for (Entry<String, Truststore> ttab : truststore.getValue().getContainedTables().entrySet()) {
+                                pw.print("<td class='" + truststore.getKey() + "'>");
+                                pw.print("<span title='" + truststore.getKey() + "/" + ttab.getKey() + "' style='color: ");
+                                // float val =
+                                // truststore.getValue().contains(e.getValue());
+                                if (ttab.getValue().contains(e.getValue())) {
+                                    pw.print("green'>&#x2714;</span>");// check:
+                                                                       //
+                                } else {
+                                    pw.print("red'>&#x2718;</span>"); // cross:
+                                                                      //
+                                }
+                                pw.print("</td>");
+                            }
+                        }
+                        pw.println("</tr>");
+                    }
+                }
+                pw.println("</table>");
             }
-            pw.println("</table>");
-
             br = new BufferedReader(new InputStreamReader(Service.class.getResourceAsStream("../res/footer.htm"), "UTF-8"));
             while ((line = br.readLine()) != null) {
                 pw.println(line);
