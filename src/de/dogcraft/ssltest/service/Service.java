@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
@@ -100,15 +102,19 @@ public class Service extends HttpServlet {
         if (path == null || path.equals("/")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "server"), Service.class.getResourceAsStream("../res/index.htm"), Service.class.getResourceAsStream("../res/footer.htm"), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "server"), Service.class.getResourceAsStream("../res/index.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), resp.getOutputStream());
         } else if (path.equals("/about")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "about"), Service.class.getResourceAsStream("../res/about.htm"), Service.class.getResourceAsStream("../res/footer.htm"), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "about"), Service.class.getResourceAsStream("../res/about.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), resp.getOutputStream());
+        } else if (path.equals("/dataprotection")) {
+            resp.setContentType("text/html");
+            resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), ""), Service.class.getResourceAsStream("../res/dataprotection.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), "dataprotection"), resp.getOutputStream());
         } else if (path.equals("/cert")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "cert"), Service.class.getResourceAsStream("../res/cert.htm"), Service.class.getResourceAsStream("../res/footer.htm"), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "cert"), Service.class.getResourceAsStream("../res/cert.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), resp.getOutputStream());
         } else if (path.equals("/server.event")) {
             resp.addHeader("Cache-Control", "max-age=0");
             if (req.getParameter("domain") != null) {
@@ -208,6 +214,8 @@ public class Service extends HttpServlet {
         in = new ReplacingInputStream(in, "$classserver", page.contains("server") ? "active" : "");
         in = new ReplacingInputStream(in, "$classcert", page.contains("cert") ? "active" : "");
         in = new ReplacingInputStream(in, "$classtrust", page.contains("trust") ? "active" : "");
+        in = new ReplacingInputStream(in, "$classdataprotection", page.contains("dataprotection") ? "active" : "");
+        in = new ReplacingInputStream(in, "$year", new SimpleDateFormat("yyyy").format(new Date()));
         return new ReplacingInputStream(in, "$classabout", page.contains("about") ? "active" : "");
     }
 }
