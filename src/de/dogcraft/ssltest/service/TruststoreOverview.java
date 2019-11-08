@@ -426,7 +426,7 @@ public class TruststoreOverview extends HttpServlet {
                 }
                 pw.println("</table>");
             }
-            br = new BufferedReader(new InputStreamReader(Service.class.getResourceAsStream("../res/footer.htm"), "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(Service.replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), "UTF-8"));
             while ((line = br.readLine()) != null) {
                 pw.println(line);
             }
