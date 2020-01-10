@@ -340,10 +340,10 @@ span.error-sign{
 }
 
 .cert-trust{
-	stroke: #000;
+  stroke: #000;
 }
 .node a text{
-	text-anchor: middle;
+  text-anchor: middle;
 }
 .drag-and-drop {
   height: 200px;
@@ -354,4 +354,13 @@ span.error-sign{
   border-color: #ccc;
   line-height: 200px;
   text-align: center
+}
+
+/* Teracara */
+.navbar .brand, .navbar .nav > li > a:hover {
+  background-color: #cccccc !important;
+}
+.navbar-inverse {
+    background-color:#ffffff !important;
+    border-color: #ffffff;
 }
