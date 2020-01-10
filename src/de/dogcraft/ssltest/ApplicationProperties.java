@@ -9,6 +9,8 @@ public class ApplicationProperties {
 
     private String applicationName = "SSL-Test";
 
+    private String navbarStyle = "navbar-inverse";
+
     private int port = 8080;
 
     public ApplicationProperties() throws FileNotFoundException, IOException {
@@ -16,6 +18,7 @@ public class ApplicationProperties {
         prop.load(new FileInputStream("config/application.properties"));
         applicationName = prop.getProperty("applicationame");
         port = Integer.parseInt(prop.getProperty("port"));
+        navbarStyle = prop.getProperty("navbarStyle");
     }
 
     public String getApplicationName() {
@@ -24,5 +27,9 @@ public class ApplicationProperties {
 
     public int getPort() {
         return port;
+    }
+
+    public String getNavbarStyle() {
+        return navbarStyle;
     }
 }

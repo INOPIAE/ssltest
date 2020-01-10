@@ -216,6 +216,7 @@ public class Service extends HttpServlet {
         in = new ReplacingInputStream(in, "$classtrust", page.contains("trust") ? "active" : "");
         in = new ReplacingInputStream(in, "$classdataprotection", page.contains("dataprotection") ? "active" : "");
         in = new ReplacingInputStream(in, "$year", new SimpleDateFormat("yyyy").format(new Date()));
+        in = new ReplacingInputStream(in, "$navbarstyle", Standalone.app.getNavbarStyle());
         return new ReplacingInputStream(in, "$classabout", page.contains("about") ? "active" : "");
     }
 }

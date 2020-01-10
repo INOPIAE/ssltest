@@ -1,2 +1,3 @@
 applicationame=SSL-Test
 port=8080
+navbarStyle =navbar-inverse
