@@ -72,7 +72,11 @@ public class TruststoreOverview extends HttpServlet {
                 X500Name n = new X500Name(c.getSubjectX500Principal().getEncoded());
                 o = n.getOrganization();
                 ou = n.getOrganizationalUnit();
-                cn = n.getCommonName();
+                try {
+                    cn = n.getCommonName();
+                } catch (IOException e) {
+                    System.out.println(String.format("Error in cn of %s O=%s OU=%s", pubkey, o, ou));
+                }
                 country = n.getCountry();
                 other = "";
                 for (AVA i : n.allAvas()) {
