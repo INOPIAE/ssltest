@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.server.Request;
-
 import de.dogcraft.ssltest.KnownDHGroup;
 import de.dogcraft.ssltest.Standalone;
 import de.dogcraft.ssltest.utils.CertificateWrapper;
@@ -111,6 +109,10 @@ public class Service extends HttpServlet {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
             copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), ""), Service.class.getResourceAsStream("../res/dataprotection.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), "dataprotection"), resp.getOutputStream());
+        } else if (path.equals("/imprint")) {
+            resp.setContentType("text/html");
+            resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), ""), Service.class.getResourceAsStream("../res/imprint.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), "imprint"), resp.getOutputStream());
         } else if (path.equals("/cert")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
@@ -218,6 +220,9 @@ public class Service extends HttpServlet {
         in = new ReplacingInputStream(in, "$year", new SimpleDateFormat("yyyy").format(new Date()));
         in = new ReplacingInputStream(in, "$navbarstyle", Standalone.app.getNavbarStyle());
         in = new ReplacingInputStream(in, "$logo", Standalone.app.getLogo());
+        if (Standalone.app.getImprint()) {
+            in = new ReplacingInputStream(in, "$imprint", "<li  class=\"" + (page.contains("imprint") ? "active" : "") + "\"><a href=\"imprint\">Imprint</a></li>");
+        }
         return new ReplacingInputStream(in, "$classabout", page.contains("about") ? "active" : "");
     }
 }

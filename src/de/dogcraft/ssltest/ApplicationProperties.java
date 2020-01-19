@@ -15,6 +15,8 @@ public class ApplicationProperties {
 
     private int port = 8080;
 
+    private boolean imprint = false;
+
     public ApplicationProperties() throws FileNotFoundException, IOException {
         Properties prop = new Properties();
         prop.load(new FileInputStream("config/application.properties"));
@@ -22,6 +24,7 @@ public class ApplicationProperties {
         port = Integer.parseInt(prop.getProperty("port"));
         logo = prop.getProperty("logo");
         navbarStyle = prop.getProperty("navbarStyle");
+        imprint = Boolean.parseBoolean(prop.getProperty("imprint"));
     }
 
     public String getApplicationName() {
@@ -38,5 +41,9 @@ public class ApplicationProperties {
 
     public String getNavbarStyle() {
         return navbarStyle;
+    }
+
+    public boolean getImprint() {
+        return imprint;
     }
 }
