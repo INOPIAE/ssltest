@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.server.Request;
+
 import de.dogcraft.ssltest.KnownDHGroup;
 import de.dogcraft.ssltest.Standalone;
 import de.dogcraft.ssltest.utils.CertificateWrapper;
