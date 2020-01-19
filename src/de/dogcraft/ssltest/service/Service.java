@@ -100,7 +100,11 @@ public class Service extends HttpServlet {
         if (path == null || path.equals("/")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
-            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "server"), Service.class.getResourceAsStream("../res/index.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), resp.getOutputStream());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), ""), Service.class.getResourceAsStream("../res/index.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), resp.getOutputStream());
+        } else if (path.equals("/server")) {
+            resp.setContentType("text/html");
+            resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
+            copyStream(replaceHTML(Service.class.getResourceAsStream("../res/header.htm"), "server"), Service.class.getResourceAsStream("../res/server.htm"), replaceHTML(Service.class.getResourceAsStream("../res/footer.htm"), ""), resp.getOutputStream());
         } else if (path.equals("/about")) {
             resp.setContentType("text/html");
             resp.setDateHeader("Last-Modified", ManagementFactory.getRuntimeMXBean().getStartTime());
