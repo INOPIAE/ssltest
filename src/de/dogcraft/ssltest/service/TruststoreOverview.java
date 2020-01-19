@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.dogcraft.ssltest.utils.PEM;
 import de.dogcraft.ssltest.utils.Truststore;
 import de.dogcraft.ssltest.utils.TruststoreGroup;
 import de.dogcraft.ssltest.utils.TruststoreUtil;
@@ -380,7 +381,7 @@ public class TruststoreOverview extends HttpServlet {
             }
             if ( !root.isEmpty()) {
                 pw.println("<table border='1'>");
-                pw.print("<tr><th>C</th><th>O</th><th>OU</th><th>CN</th><th>other dn</th><th>signature</th><th>keyType</th><th>keySize</th><th>keyDetail</th><th>pubkey ID</th><th>#</th><th>from</th><th>to</th><th><span title='selfsigned'>S</span>");
+                pw.print("<tr><th class='rotate'><div>Download certificate</div></th><th>C</th><th>O</th><th>OU</th><th>CN</th><th>other dn</th><th>signature</th><th>keyType</th><th>keySize</th><th>keyDetail</th><th>pubkey ID</th><th>#</th><th>from</th><th>to</th><th><span title='selfsigned'>S</span>");
                 for (Entry<String, TruststoreGroup> truststore : TruststoreGroup.getStores().entrySet()) {
                     for (Entry<String, Truststore> entry : truststore.getValue().getContainedTables().entrySet()) {
                         pw.print("<th class='rotate'><div><span title='");
@@ -395,6 +396,9 @@ public class TruststoreOverview extends HttpServlet {
                     X509Certificate cert = (X509Certificate) e.getValue();
                     if (cert.getSubjectDN().toString().toLowerCase().contains(root) || root.equals("*")) {
                         pw.print("<tr>");
+                        pw.print("<td>");
+                        pw.print(String.format("<a download=\"%s.pem\" href=\"data:text/plain;base64,%s\" target=\"_blank\">PEM</a>", TruststoreUtil.outputFingerprint(e.getValue(), MessageDigest.getInstance("SHA-512")), PEM.formatBase64(PEM.encode("Certificate", cert.getPublicKey().toString().getBytes()).getBytes())));
+                        pw.print("</td>");
                         e.getKey().print(pw, TruststoreUtil.outputFingerprint(e.getValue(), MessageDigest.getInstance("SHA-512")));
                         outputDate(pw, cert.getNotBefore(), false);
                         outputDate(pw, cert.getNotAfter(), true);
