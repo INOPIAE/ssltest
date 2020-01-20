@@ -135,7 +135,7 @@ public class Service extends HttpServlet {
             }
         } else if (path.equals("/serverclear")) {
             ServerTestService.clearCache();
-            resp.sendRedirect("/");
+            resp.sendRedirect("/server");
         } else if (path.equals("/cert.event")) {
             resp.addHeader("Cache-Control", "max-age=0");
             if (req.getParameter("fp") != null) {
