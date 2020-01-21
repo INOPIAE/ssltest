@@ -466,7 +466,7 @@ var CertsModule = function(c, idbase) {
 			var tr = document.createElement("tr");
 
 			var key = document.createElement("td");
-			key.appendChild(document.createTextNode("Autority Info Access"));
+			key.appendChild(document.createTextNode("Authority Info Access"));
 			tr.appendChild(key);
 
 			var value = document.createElement("td");
